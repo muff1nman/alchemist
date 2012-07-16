@@ -1,29 +1,22 @@
 require 'spec_helper'
 
-describe Alchemist::Unit do
-  let(:definition) { Alchemist::Definition.new(:length, :meter, 1) }
-  subject { Alchemist::Unit.new(definition, 1) }
-
-  its(:definition) { should == definition }
-  its(:value) { should == 1 }
-
-  it "is comparable" do
-    Alchemist::Unit.should include(Comparable)
-  end
-
-end
-
-describe Alchemist::Unit, "to" do
-  context "with unit" do
-    before do
-      Alchemist.define(:length) do
-        unit :meter, 1
-        unit :foot, 0.3048
-      end
+module Alchemist
+  describe Unit do
+    it "converts to string for singular" do
+      unit(1, :meter).to_s.should == "1 meter"
     end
 
-    it "converts the unit" do
-      1.meter.to(:foot).should == 3.2808399.foot
+    it "converts to plural form for multiple" do
+      unit(2, :meter).to_s.should == "2 meters"
+    end
+
+    def unit(value, type)
+      Alchemist::Unit.new(value, definition)
+    end
+
+    def definition
+      Alchemist::Definition.new(:length, :meter, 1, plural: 'meters', short: 'm')
     end
   end
+
 end

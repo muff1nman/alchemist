@@ -1,35 +1,20 @@
 module Alchemist
   class Definition
-    attr_accessor :measurement, :name, :value
-    attr_accessor :plural_name
-    attr_accessor :short_names, :aliases
-
-    def initialize(measurement, name, value)
-      @measurement = measurement
-      @name = name
-      @value = value
-      @short_names = []
-      @aliases = {}
+    attr_reader :type
+    def initialize(type, unit_name, base, options = {})
+      @type, @unit_name, @base = type, unit_name.to_s, base.to_f
+      @options = options
     end
 
-    def plural(value)
-      @plural_name = value
+    def unit_name(value=1)
+      value == 1 ? @unit_name : plural_name
     end
 
-    def short(*names)
-      @short_names += names
-    end
+    private
 
-    def add_alias(aliases)
-      aliases = { aliases => aliases } unless aliases.is_a?(Hash)
-      @aliases.merge!(aliases)
+    def plural_name
+      @options[:plural] || @unit_name
     end
-
-    def each_name
-      [@name, @plural_name, @short_names, [*@aliases].uniq].flatten.compact.each do |name|
-        yield name
-      end
-    end
-
   end
 end
+
